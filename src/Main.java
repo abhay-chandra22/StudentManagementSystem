@@ -32,30 +32,25 @@ public class Main {
         students.add(student2);
         students.add(student3);
 
-        for(Student student : students){
-            System.out.println(student);
-
-        }
-
-        System.out.println("Number of Students : " + students.size());
-        System.out.println("Third Student : " + students.get(2));
-
-
         Scanner sc = new Scanner(System.in);
         System.out.print("Enter Student ID: ");
         int searchId = sc.nextInt();
-        boolean found = false;
-        System.out.println("Searching for student with ID " + searchId);
-        for (Student student : students) {
-            if (student.getId() == searchId) {
-                System.out.println("Student found: " + student);
-                found = true;
-            }
-        }
-        if(!found){
+        Student foundStudent = findStudentById(students , searchId);
+        if(foundStudent != null){
+            System.out.println("Student found : " + foundStudent);
+        }else{
             System.out.println("Student not found");
         }
 
 
+    }
+
+    public static Student findStudentById(ArrayList<Student> students, int searchId){
+        for (Student student : students) {
+            if (student.getId() == searchId) {
+                return student;
+            }
+        }
+        return null;
     }
 }
