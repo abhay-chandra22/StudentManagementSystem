@@ -1,6 +1,9 @@
 import model.Student;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args){
@@ -40,6 +43,24 @@ public class Main {
             System.out.println("Student found : " + foundStudent);
         }else{
             System.out.println("Student not found");
+        }
+
+        String url = "jdbc:mysql://localhost:3306/student_management";
+        String user = "root";
+        String password = "Abhay@2004";
+
+        try{
+            Connection connection = DriverManager.getConnection(
+                    url,
+                    user,
+                    password
+            );
+            System.out.println("Connected to Database successfully");
+            connection.close();
+        }
+        catch(SQLException e){
+            System.out.println("Database connection failed");
+            e.printStackTrace();
         }
 
 
