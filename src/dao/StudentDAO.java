@@ -10,12 +10,51 @@ import model.Student;
 public class StudentDAO {
     private final String url = "jdbc:mysql://localhost:3306/student_management";
     private final String user = "root";
-    private final String password = "YOUR_PASSWORD";
+    private final String password = "YOURPASSWORD";
 
     private Connection getConnection() throws SQLException {
         Connection conn = DriverManager.getConnection(url, user, password);
         return conn;
     }
+
+    public void addStudent(Student student) throws SQLException{
+        String sql = "INSERT INTO students (id , name , email , age , course) VALUES (?,?,?,?,?)";
+        try(Connection conn = getConnection()){
+            try (PreparedStatement preparedStatement = conn.prepareStatement(sql)){
+                preparedStatement.setInt(1,student.getId());
+                preparedStatement.setString(2, student.getName());
+                preparedStatement.setString(3, student.getEmail());
+                preparedStatement.setInt(4, student.getAge());
+                preparedStatement.setString(5, student.getCourse());
+                int rowAffected = preparedStatement.executeUpdate();
+                System.out.println("Row Affected for insert: " + rowAffected);
+            }
+        }
+    }
+
+    public void updateStudent(Student student) throws SQLException{
+        String sql = "UPDATE students SET age = ? WHERE id = ?";
+        try(Connection conn = getConnection()){
+            try(PreparedStatement preparedStatement = conn.prepareStatement(sql)){
+                preparedStatement.setInt(1 , student.getAge());
+                preparedStatement.setInt(2, student.getId());
+                int rowAffected = preparedStatement.executeUpdate();
+                System.out.println("Row affected for update: " + rowAffected);
+            }
+        }
+    }
+
+    public void deleteStudent(int id) throws SQLException{
+            String sql = "DELETE FROM students WHERE id = ?";
+            try(Connection conn = getConnection()){
+               try(PreparedStatement preparedStatement = conn.prepareStatement(sql)){
+                   preparedStatement.setInt(1, id);
+                   int rowAffected = preparedStatement.executeUpdate();
+                   System.out.println("Row Affected for delete: " + rowAffected);
+               }
+            }
+    }
+
     public Student findStudentById(int id) throws SQLException {
         String sql = "SELECT * FROM students WHERE id = ?";
 
