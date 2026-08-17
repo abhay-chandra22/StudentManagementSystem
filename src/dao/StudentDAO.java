@@ -14,7 +14,7 @@ import java.util.List;
 public class StudentDAO {
     private final String url = "jdbc:mysql://localhost:3306/student_management";
     private final String user = "root";
-    private final String password = "YOUR_PASSWORD";
+    private final String password = System.getenv("DB_PASSWORD");
 
     private Connection getConnection() throws SQLException {
         Connection conn = DriverManager.getConnection(url, user, password);

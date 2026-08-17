@@ -75,7 +75,9 @@ public class Main {
                     studentService.updateStudent(updatedStudent);
                     break;
                 case 5:
-                    System.out.println("Delete Student selected");
+                    System.out.print("Enter Student Id to delete: ");
+                    int deleteId = scanner.nextInt();
+                    studentService.deleteStudent(deleteId);
                     break;
                 case 6:
                     System.out.println("Exiting...");
