@@ -6,11 +6,15 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 import model.Student;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 
 public class StudentDAO {
     private final String url = "jdbc:mysql://localhost:3306/student_management";
     private final String user = "root";
-    private final String password = "YOURPASSWORD";
+    private final String password = "YOUR_PASSWORD";
 
     private Connection getConnection() throws SQLException {
         Connection conn = DriverManager.getConnection(url, user, password);
@@ -33,11 +37,14 @@ public class StudentDAO {
     }
 
     public void updateStudent(Student student) throws SQLException{
-        String sql = "UPDATE students SET age = ? WHERE id = ?";
+        String sql = "UPDATE students SET name = ?, email = ?, age = ?, course = ? WHERE id = ?";
         try(Connection conn = getConnection()){
             try(PreparedStatement preparedStatement = conn.prepareStatement(sql)){
-                preparedStatement.setInt(1 , student.getAge());
-                preparedStatement.setInt(2, student.getId());
+                preparedStatement.setString(1, student.getName());
+                preparedStatement.setString(2, student.getEmail());
+                preparedStatement.setInt(3 , student.getAge());
+                preparedStatement.setString(4, student.getCourse());
+                preparedStatement.setInt(5, student.getId());
                 int rowAffected = preparedStatement.executeUpdate();
                 System.out.println("Row affected for update: " + rowAffected);
             }
@@ -79,5 +86,29 @@ public class StudentDAO {
                 }
             }
         }
+    }
+
+    public List<Student> getAllStudents() throws SQLException{
+        List<Student> students = new ArrayList<>();
+        String sql = "SELECT * FROM students";
+        try(
+                Connection conn = getConnection();
+                PreparedStatement preparedStatement = conn.prepareStatement(sql)
+        ){
+            try(
+                    ResultSet resultSet = preparedStatement.executeQuery()
+            ){
+                while(resultSet.next()){
+                    int studentId = resultSet.getInt("id");
+                    String name = resultSet.getString("name");
+                    String email = resultSet.getString("email");
+                    int age = resultSet.getInt("age");
+                    String course = resultSet.getString("course");
+                    Student student = new Student(studentId, name, email, age, course);
+                    students.add(student);
+                }
+            }
+        }
+        return students;
     }
 }

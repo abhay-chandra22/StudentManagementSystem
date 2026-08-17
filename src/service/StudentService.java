@@ -2,6 +2,7 @@ package service;
 import dao.StudentDAO;
 import java.sql.SQLException;
 import model.Student;
+import java.util.List;
 
 public class StudentService {
     private final StudentDAO studentDAO = new StudentDAO();
@@ -9,6 +10,9 @@ public class StudentService {
         return studentDAO.findStudentById(id);
     }
 
+    public List<Student> getAllStudents() throws SQLException{
+        return studentDAO.getAllStudents();
+    }
     public void addStudent(Student student) throws SQLException{
         studentDAO.addStudent(student);
     }
