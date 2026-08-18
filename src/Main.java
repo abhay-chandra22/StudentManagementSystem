@@ -3,6 +3,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 import model.Student;
+import java.util.InputMismatchException;
 
 public class Main {
     public static void main(String[] args) throws SQLException{
@@ -26,20 +27,20 @@ public class Main {
             System.out.println("6. Exit");
             System.out.print("Enter your choice: ");
 
-            choice = scanner.nextInt();
+            choice = readInt(scanner);
 
             switch (choice) {
                 case 1:
                     System.out.print("Enter Student ID: ");
-                    int id = scanner.nextInt();
+                    int id = readInt(scanner);
                     System.out.print("Enter Student Name: ");
-                    String name = scanner.next();
+                    String name = scanner.nextLine();
                     System.out.print("Enter Student Email: ");
                     String email = scanner.next();
                     System.out.print("Enter Student Age: ");
-                    int age = scanner.nextInt();
+                    int age = readInt(scanner);
                     System.out.print("Enter Student Course: ");
-                    String course = scanner.next();
+                    String course = scanner.nextLine();
 
                     Student student = new Student(id, name, email, age, course);
                     studentService.addStudent(student);
@@ -52,7 +53,7 @@ public class Main {
                     break;
                 case 3:
                     System.out.print("Enter Student ID: ");
-                    int searchId = scanner.nextInt();
+                    int searchId = readInt(scanner);
                     Student foundStudent = studentService.findStudentById(searchId);
                     if(foundStudent != null){
                         System.out.println("Student found:  " + foundStudent);
@@ -62,21 +63,21 @@ public class Main {
                     break;
                 case 4:
                     System.out.print("Enter Student Id to update: ");
-                    int updateId = scanner.nextInt();
+                    int updateId = readInt(scanner);
                     System.out.print("Enter new Student Name: ");
-                    String updateName = scanner.next();
+                    String updateName = scanner.nextLine();
                     System.out.print("Enter new Student Email: ");
                     String updateEmail = scanner.next();
                     System.out.print("Enter new Student Age: ");
-                    int updateAge = scanner.nextInt();
+                    int updateAge = readInt(scanner);
                     System.out.print("Enter new Student Course: ");
-                    String updateCourse = scanner.next();
+                    String updateCourse = scanner.nextLine();
                     Student updatedStudent = new Student(updateId, updateName , updateEmail , updateAge , updateCourse);
                     studentService.updateStudent(updatedStudent);
                     break;
                 case 5:
                     System.out.print("Enter Student Id to delete: ");
-                    int deleteId = scanner.nextInt();
+                    int deleteId = readInt(scanner);
                     studentService.deleteStudent(deleteId);
                     break;
                 case 6:
@@ -85,6 +86,18 @@ public class Main {
                 default:
                     System.out.println("Invalid choice");
                     break;
+            }
+        }
+    }
+    public static int readInt(Scanner scanner){
+        while(true){
+            try{
+                int value = scanner.nextInt();
+                scanner.nextLine();
+                return value;
+            }catch(InputMismatchException e){
+                System.out.print("Please enter a valid number: ");
+                scanner.nextLine();
             }
         }
     }
