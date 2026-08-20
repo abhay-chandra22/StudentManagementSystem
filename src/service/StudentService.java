@@ -13,25 +13,27 @@ public class StudentService {
     public List<Student> getAllStudents() throws SQLException{
         return studentDAO.getAllStudents();
     }
-    public void addStudent(Student student) throws SQLException{
+    public AddStudentResult addStudent(Student student) throws SQLException{
         if(!validateStudent(student)){
-            return;
+            return AddStudentResult.INVALID_DATA;
         }
         if(findStudentById(student.getId()) == null){
             studentDAO.addStudent(student);
+            return AddStudentResult.SUCCESS;
         }else{
-            System.out.println("Student already exists");
+            return AddStudentResult.DUPLICATE_ID;
         }
     }
 
-    public void updateStudent(Student student) throws SQLException{
+    public UpdateStudentResult updateStudent(Student student) throws SQLException{
         if(!validateStudent(student)){
-            return;
+            return UpdateStudentResult.INVALID_DATA;
         }
         if(findStudentById(student.getId()) != null) {
             studentDAO.updateStudent(student);
+            return UpdateStudentResult.SUCCESS;
         }else{
-            System.out.println("Student doesn't exist");
+            return UpdateStudentResult.STUDENT_NOT_FOUND;
         }
     }
 

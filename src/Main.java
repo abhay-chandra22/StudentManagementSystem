@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Scanner;
 import model.Student;
 import java.util.InputMismatchException;
+import service.AddStudentResult;
+import service.UpdateStudentResult;
 
 public class Main {
     public static void main(String[] args){
@@ -43,7 +45,14 @@ public class Main {
                         String course = scanner.nextLine();
 
                         Student student = new Student(id, name, email, age, course);
-                        studentService.addStudent(student);
+                        AddStudentResult result = studentService.addStudent(student);
+                        if (result == AddStudentResult.SUCCESS) {
+                            System.out.println("Student Added Successfully");
+                        } else if (result == AddStudentResult.INVALID_DATA) {
+                            System.out.println("Invalid Student Data");
+                        } else if (result == AddStudentResult.DUPLICATE_ID) {
+                            System.out.println("Student ID already exists");
+                        }
                         break;
                     case 2:
                         List<Student> students = studentService.getAllStudents();
@@ -73,7 +82,14 @@ public class Main {
                         System.out.print("Enter new Student Course: ");
                         String updateCourse = scanner.nextLine();
                         Student updatedStudent = new Student(updateId, updateName, updateEmail, updateAge, updateCourse);
-                        studentService.updateStudent(updatedStudent);
+                        UpdateStudentResult updatedResult = studentService.updateStudent(updatedStudent);
+                        if(updatedResult == UpdateStudentResult.SUCCESS){
+                            System.out.println("Student Updated Successfully");
+                        }else if(updatedResult == UpdateStudentResult.INVALID_DATA){
+                            System.out.println("Invalid Student Data");
+                        }else if (updatedResult == UpdateStudentResult.STUDENT_NOT_FOUND) {
+                            System.out.println("Student Not Found");
+                        }
                         break;
                     case 5:
                         System.out.print("Enter Student Id to delete: ");
