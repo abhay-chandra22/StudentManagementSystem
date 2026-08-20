@@ -37,11 +37,12 @@ public class StudentService {
         }
     }
 
-    public void deleteStudent(int id) throws SQLException{
+    public DeleteStudentResult deleteStudent(int id) throws SQLException{
         if(findStudentById(id) != null) {
             studentDAO.deleteStudent(id);
+            return DeleteStudentResult.SUCCESS;
         }else{
-            System.out.println("Student doesn't exist");
+            return DeleteStudentResult.STUDENT_NOT_FOUND;
         }
     }
     private boolean validateStudent(Student student){

@@ -1,3 +1,4 @@
+import service.DeleteStudentResult;
 import service.StudentService;
 import java.sql.SQLException;
 import java.util.List;
@@ -6,6 +7,7 @@ import model.Student;
 import java.util.InputMismatchException;
 import service.AddStudentResult;
 import service.UpdateStudentResult;
+import service.DeleteStudentResult;
 
 public class Main {
     public static void main(String[] args){
@@ -94,7 +96,12 @@ public class Main {
                     case 5:
                         System.out.print("Enter Student Id to delete: ");
                         int deleteId = readInt(scanner);
-                        studentService.deleteStudent(deleteId);
+                        DeleteStudentResult deletedResult = studentService.deleteStudent(deleteId);
+                        if(deletedResult == DeleteStudentResult.SUCCESS){
+                            System.out.println("Student Deleted Successfully");
+                        }else if(deletedResult == DeleteStudentResult.STUDENT_NOT_FOUND){
+                            System.out.println("Student Not Found");
+                        }
                         break;
                     case 6:
                         System.out.println("Exiting...");
