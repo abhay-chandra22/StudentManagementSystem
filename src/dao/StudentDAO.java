@@ -21,7 +21,7 @@ public class StudentDAO {
         return conn;
     }
 
-    public void addStudent(Student student) throws SQLException{
+    public int addStudent(Student student) throws SQLException{
         String sql = "INSERT INTO students (id , name , email , age , course) VALUES (?,?,?,?,?)";
         try(Connection conn = getConnection()){
             try (PreparedStatement preparedStatement = conn.prepareStatement(sql)){
@@ -31,12 +31,12 @@ public class StudentDAO {
                 preparedStatement.setInt(4, student.getAge());
                 preparedStatement.setString(5, student.getCourse());
                 int rowAffected = preparedStatement.executeUpdate();
-                System.out.println("Row Affected for insert: " + rowAffected);
+                return rowAffected;
             }
         }
     }
 
-    public void updateStudent(Student student) throws SQLException{
+    public int updateStudent(Student student) throws SQLException{
         String sql = "UPDATE students SET name = ?, email = ?, age = ?, course = ? WHERE id = ?";
         try(Connection conn = getConnection()){
             try(PreparedStatement preparedStatement = conn.prepareStatement(sql)){
@@ -46,18 +46,18 @@ public class StudentDAO {
                 preparedStatement.setString(4, student.getCourse());
                 preparedStatement.setInt(5, student.getId());
                 int rowAffected = preparedStatement.executeUpdate();
-                System.out.println("Row affected for update: " + rowAffected);
+                return rowAffected;
             }
         }
     }
 
-    public void deleteStudent(int id) throws SQLException{
+    public int deleteStudent(int id) throws SQLException{
             String sql = "DELETE FROM students WHERE id = ?";
             try(Connection conn = getConnection()){
                try(PreparedStatement preparedStatement = conn.prepareStatement(sql)){
                    preparedStatement.setInt(1, id);
                    int rowAffected = preparedStatement.executeUpdate();
-                   System.out.println("Row Affected for delete: " + rowAffected);
+                   return rowAffected;
                }
             }
     }

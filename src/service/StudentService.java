@@ -21,8 +21,12 @@ public class StudentService {
             return new StudentOperationResult(OperationStatus.INVALID_DATA, validationResult);
         }
         if(findStudentById(student.getId()) == null){
-            studentDAO.addStudent(student);
+            int rowAffected = studentDAO.addStudent(student);
+            if(rowAffected == 1){
             return new StudentOperationResult(OperationStatus.SUCCESS , null);
+            }else {
+                throw new SQLException("Student could not be added.");
+            }
         }else{
             return new StudentOperationResult(OperationStatus.DUPLICATE_ID, null);
         }
@@ -34,8 +38,12 @@ public class StudentService {
             return new StudentOperationResult(OperationStatus.INVALID_DATA , validationResult);
         }
         if(findStudentById(student.getId()) != null) {
-            studentDAO.updateStudent(student);
-            return new StudentOperationResult(OperationStatus.SUCCESS , null);
+            int rowAffected = studentDAO.updateStudent(student);
+            if(rowAffected == 1) {
+                return new StudentOperationResult(OperationStatus.SUCCESS, null);
+            }else{
+                throw new SQLException("Student could not be updated.");
+            }
         }else{
             return new StudentOperationResult(OperationStatus.STUDENT_NOT_FOUND , null);
         }
@@ -43,8 +51,12 @@ public class StudentService {
 
     public StudentOperationResult deleteStudent(int id) throws SQLException{
         if(findStudentById(id) != null) {
-            studentDAO.deleteStudent(id);
-            return new StudentOperationResult(OperationStatus.SUCCESS , null);
+            int rowAffected = studentDAO.deleteStudent(id);
+            if(rowAffected == 1) {
+                return new StudentOperationResult(OperationStatus.SUCCESS, null);
+            }else{
+                throw new SQLException("Student could not be deleted.");
+            }
         }else{
             return new StudentOperationResult(OperationStatus.STUDENT_NOT_FOUND , null);
         }
