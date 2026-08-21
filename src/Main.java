@@ -1,13 +1,12 @@
-import service.DeleteStudentResult;
-import service.StudentService;
+import service.*;
+
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 import model.Student;
 import java.util.InputMismatchException;
-import service.AddStudentResult;
-import service.UpdateStudentResult;
-import service.DeleteStudentResult;
+import service.StudentOperationResult;
+import service.OperationStatus;
 
 public class Main {
     public static void main(String[] args){
@@ -47,12 +46,12 @@ public class Main {
                         String course = scanner.nextLine();
 
                         Student student = new Student(id, name, email, age, course);
-                        AddStudentResult result = studentService.addStudent(student);
-                        if (result == AddStudentResult.SUCCESS) {
+                        StudentOperationResult  result = studentService.addStudent(student);
+                        if (result.getStatus() == OperationStatus.SUCCESS) {
                             System.out.println("Student Added Successfully");
-                        } else if (result == AddStudentResult.INVALID_DATA) {
-                            System.out.println("Invalid Student Data");
-                        } else if (result == AddStudentResult.DUPLICATE_ID) {
+                        } else if (result.getStatus() == OperationStatus.INVALID_DATA) {
+                            System.out.println("Invalid Data : " + result.getValidationResult());
+                        } else if (result.getStatus() == OperationStatus.DUPLICATE_ID) {
                             System.out.println("Student ID already exists");
                         }
                         break;
@@ -84,22 +83,22 @@ public class Main {
                         System.out.print("Enter new Student Course: ");
                         String updateCourse = scanner.nextLine();
                         Student updatedStudent = new Student(updateId, updateName, updateEmail, updateAge, updateCourse);
-                        UpdateStudentResult updatedResult = studentService.updateStudent(updatedStudent);
-                        if(updatedResult == UpdateStudentResult.SUCCESS){
+                        StudentOperationResult updatedResult = studentService.updateStudent(updatedStudent);
+                        if(updatedResult.getStatus() == OperationStatus.SUCCESS){
                             System.out.println("Student Updated Successfully");
-                        }else if(updatedResult == UpdateStudentResult.INVALID_DATA){
-                            System.out.println("Invalid Student Data");
-                        }else if (updatedResult == UpdateStudentResult.STUDENT_NOT_FOUND) {
+                        }else if(updatedResult.getStatus() == OperationStatus.INVALID_DATA){
+                            System.out.println("Invalid Data : " + updatedResult.getValidationResult());
+                        }else if (updatedResult.getStatus() == OperationStatus.STUDENT_NOT_FOUND) {
                             System.out.println("Student Not Found");
                         }
                         break;
                     case 5:
                         System.out.print("Enter Student Id to delete: ");
                         int deleteId = readInt(scanner);
-                        DeleteStudentResult deletedResult = studentService.deleteStudent(deleteId);
-                        if(deletedResult == DeleteStudentResult.SUCCESS){
+                        StudentOperationResult deletedResult = studentService.deleteStudent(deleteId);
+                        if(deletedResult.getStatus() == OperationStatus.SUCCESS){
                             System.out.println("Student Deleted Successfully");
-                        }else if(deletedResult == DeleteStudentResult.STUDENT_NOT_FOUND){
+                        }else if(deletedResult.getStatus() == OperationStatus.STUDENT_NOT_FOUND){
                             System.out.println("Student Not Found");
                         }
                         break;

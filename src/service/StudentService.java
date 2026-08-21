@@ -1,5 +1,7 @@
 package service;
 import dao.StudentDAO;
+
+import java.lang.management.OperatingSystemMXBean;
 import java.sql.SQLException;
 import model.Student;
 import java.util.List;
@@ -13,59 +15,56 @@ public class StudentService {
     public List<Student> getAllStudents() throws SQLException{
         return studentDAO.getAllStudents();
     }
-    public AddStudentResult addStudent(Student student) throws SQLException{
-        if(!validateStudent(student)){
-            return AddStudentResult.INVALID_DATA;
+    public StudentOperationResult addStudent(Student student) throws SQLException{
+        ValidationResult validationResult = validateStudent(student);
+        if(validationResult != ValidationResult.VALID){
+            return new StudentOperationResult(OperationStatus.INVALID_DATA, validationResult);
         }
         if(findStudentById(student.getId()) == null){
             studentDAO.addStudent(student);
-            return AddStudentResult.SUCCESS;
+            return new StudentOperationResult(OperationStatus.SUCCESS , null);
         }else{
-            return AddStudentResult.DUPLICATE_ID;
+            return new StudentOperationResult(OperationStatus.DUPLICATE_ID, null);
         }
     }
 
-    public UpdateStudentResult updateStudent(Student student) throws SQLException{
-        if(!validateStudent(student)){
-            return UpdateStudentResult.INVALID_DATA;
+    public StudentOperationResult updateStudent(Student student) throws SQLException{
+        ValidationResult validationResult = validateStudent(student);
+        if(validationResult != ValidationResult.VALID){
+            return new StudentOperationResult(OperationStatus.INVALID_DATA , validationResult);
         }
         if(findStudentById(student.getId()) != null) {
             studentDAO.updateStudent(student);
-            return UpdateStudentResult.SUCCESS;
+            return new StudentOperationResult(OperationStatus.SUCCESS , null);
         }else{
-            return UpdateStudentResult.STUDENT_NOT_FOUND;
+            return new StudentOperationResult(OperationStatus.STUDENT_NOT_FOUND , null);
         }
     }
 
-    public DeleteStudentResult deleteStudent(int id) throws SQLException{
+    public StudentOperationResult deleteStudent(int id) throws SQLException{
         if(findStudentById(id) != null) {
             studentDAO.deleteStudent(id);
-            return DeleteStudentResult.SUCCESS;
+            return new StudentOperationResult(OperationStatus.SUCCESS , null);
         }else{
-            return DeleteStudentResult.STUDENT_NOT_FOUND;
+            return new StudentOperationResult(OperationStatus.STUDENT_NOT_FOUND , null);
         }
     }
-    private boolean validateStudent(Student student){
+    private ValidationResult validateStudent(Student student){
         if(student.getId() < 1){
-            System.out.println("Invalid Student ID");
-            return false;
+            return ValidationResult.INVALID_ID;
         }
         if(student.getName().isBlank()){
-            System.out.println("Invalid Student Name");
-            return false;
+            return ValidationResult.INVALID_NAME;
         }
         if (!student.getEmail().contains("@") || !student.getEmail().contains(".")) {
-            System.out.println("Invalid Email");
-            return false;
+            return ValidationResult.INVALID_EMAIL;
         }
         if(student.getAge() < 1 || student.getAge() > 100){
-            System.out.println("Invalid Age");
-            return false;
+            return ValidationResult.INVALID_AGE;
         }
         if (student.getCourse().isBlank()) {
-            System.out.println("Invalid Course");
-            return false;
+            return ValidationResult.INVALID_COURSE;
         }
-        return true;
+        return ValidationResult.VALID;
     }
 }
