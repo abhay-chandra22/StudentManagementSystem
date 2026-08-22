@@ -50,13 +50,9 @@ public class StudentService {
     }
 
     public StudentOperationResult deleteStudent(int id) throws SQLException{
-        if(findStudentById(id) != null) {
-            int rowAffected = studentDAO.deleteStudent(id);
-            if(rowAffected == 1) {
-                return new StudentOperationResult(OperationStatus.SUCCESS, null);
-            }else{
-                throw new SQLException("Student could not be deleted.");
-            }
+        int rowAffected = studentDAO.deleteStudent(id);
+        if(rowAffected == 1){
+            return new StudentOperationResult(OperationStatus.SUCCESS , null);
         }else{
             return new StudentOperationResult(OperationStatus.STUDENT_NOT_FOUND , null);
         }
