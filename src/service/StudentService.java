@@ -37,13 +37,10 @@ public class StudentService {
         if(validationResult != ValidationResult.VALID){
             return new StudentOperationResult(OperationStatus.INVALID_DATA , validationResult);
         }
-        if(findStudentById(student.getId()) != null) {
-            int rowAffected = studentDAO.updateStudent(student);
-            if(rowAffected == 1) {
-                return new StudentOperationResult(OperationStatus.SUCCESS, null);
-            }else{
-                throw new SQLException("Student could not be updated.");
-            }
+
+        int rowAffected = studentDAO.updateStudent(student);
+        if(rowAffected == 1){
+            return new StudentOperationResult(OperationStatus.SUCCESS , null);
         }else{
             return new StudentOperationResult(OperationStatus.STUDENT_NOT_FOUND , null);
         }
