@@ -9,6 +9,8 @@ import model.Student;
 import java.util.ArrayList;
 import java.util.List;
 
+import exception.StudentManagementException;
+
 
 
 public class StudentDAO {
@@ -21,7 +23,7 @@ public class StudentDAO {
         return conn;
     }
 
-    public int addStudent(Student student) throws SQLException{
+    public int addStudent(Student student) throws StudentManagementException{
         String sql = "INSERT INTO students (id , name , email , age , course) VALUES (?,?,?,?,?)";
         try(Connection conn = getConnection()){
             try (PreparedStatement preparedStatement = conn.prepareStatement(sql)){
@@ -33,10 +35,12 @@ public class StudentDAO {
                 int rowAffected = preparedStatement.executeUpdate();
                 return rowAffected;
             }
+        }catch(SQLException e){
+            throw new StudentManagementException("Database operation failed" , e);
         }
     }
 
-    public int updateStudent(Student student) throws SQLException{
+    public int updateStudent(Student student) throws StudentManagementException{
         String sql = "UPDATE students SET name = ?, email = ?, age = ?, course = ? WHERE id = ?";
         try(Connection conn = getConnection()){
             try(PreparedStatement preparedStatement = conn.prepareStatement(sql)){
@@ -49,9 +53,12 @@ public class StudentDAO {
                 return rowAffected;
             }
         }
+        catch(SQLException e){
+            throw new StudentManagementException("Database operation failed" , e);
+        }
     }
 
-    public int deleteStudent(int id) throws SQLException{
+    public int deleteStudent(int id) throws StudentManagementException{
             String sql = "DELETE FROM students WHERE id = ?";
             try(Connection conn = getConnection()){
                try(PreparedStatement preparedStatement = conn.prepareStatement(sql)){
@@ -60,9 +67,12 @@ public class StudentDAO {
                    return rowAffected;
                }
             }
+            catch(SQLException e){
+                throw new StudentManagementException("Database operation failed" , e);
+            }
     }
 
-    public Student findStudentById(int id) throws SQLException {
+    public Student findStudentById(int id) throws StudentManagementException {
         String sql = "SELECT * FROM students WHERE id = ?";
 
         try(
@@ -86,9 +96,12 @@ public class StudentDAO {
                 }
             }
         }
+        catch(SQLException e){
+            throw new StudentManagementException("Database operation failed" , e);
+        }
     }
 
-    public List<Student> getAllStudents() throws SQLException{
+    public List<Student> getAllStudents() throws StudentManagementException{
         List<Student> students = new ArrayList<>();
         String sql = "SELECT * FROM students";
         try(
@@ -108,6 +121,9 @@ public class StudentDAO {
                     students.add(student);
                 }
             }
+        }
+        catch (SQLException e){
+            throw new StudentManagementException("Database operation failed" , e);
         }
         return students;
     }

@@ -1,12 +1,12 @@
-import service.*;
 
-import java.sql.SQLException;
+import service.StudentService;
 import java.util.List;
 import java.util.Scanner;
 import model.Student;
 import java.util.InputMismatchException;
 import service.StudentOperationResult;
 import service.OperationStatus;
+import exception.StudentManagementException;
 
 public class Main {
     public static void main(String[] args){
@@ -109,7 +109,7 @@ public class Main {
                         System.out.println("Invalid choice");
                         break;
                 }
-            }catch(SQLException e){
+            }catch(StudentManagementException e){
                 System.out.println("Database Error. Please try again.");
             }
         }

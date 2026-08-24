@@ -1,21 +1,21 @@
 package service;
 import dao.StudentDAO;
 
-import java.lang.management.OperatingSystemMXBean;
-import java.sql.SQLException;
 import model.Student;
 import java.util.List;
 
+import exception.StudentManagementException;
+
 public class StudentService {
     private final StudentDAO studentDAO = new StudentDAO();
-    public Student findStudentById(int id) throws SQLException{
+    public Student findStudentById(int id) throws StudentManagementException{
         return studentDAO.findStudentById(id);
     }
 
-    public List<Student> getAllStudents() throws SQLException{
+    public List<Student> getAllStudents() throws StudentManagementException{
         return studentDAO.getAllStudents();
     }
-    public StudentOperationResult addStudent(Student student) throws SQLException{
+    public StudentOperationResult addStudent(Student student) throws StudentManagementException{
         ValidationResult validationResult = validateStudent(student);
         if(validationResult != ValidationResult.VALID){
             return new StudentOperationResult(OperationStatus.INVALID_DATA, validationResult);
@@ -25,14 +25,14 @@ public class StudentService {
             if(rowAffected == 1){
             return new StudentOperationResult(OperationStatus.SUCCESS , null);
             }else {
-                throw new SQLException("Student could not be added.");
+                throw new StudentManagementException("Student could not be added.");
             }
         }else{
             return new StudentOperationResult(OperationStatus.DUPLICATE_ID, null);
         }
     }
 
-    public StudentOperationResult updateStudent(Student student) throws SQLException{
+    public StudentOperationResult updateStudent(Student student) throws StudentManagementException{
         ValidationResult validationResult = validateStudent(student);
         if(validationResult != ValidationResult.VALID){
             return new StudentOperationResult(OperationStatus.INVALID_DATA , validationResult);
@@ -46,7 +46,7 @@ public class StudentService {
         }
     }
 
-    public StudentOperationResult deleteStudent(int id) throws SQLException{
+    public StudentOperationResult deleteStudent(int id) throws StudentManagementException{
         int rowAffected = studentDAO.deleteStudent(id);
         if(rowAffected == 1){
             return new StudentOperationResult(OperationStatus.SUCCESS , null);
