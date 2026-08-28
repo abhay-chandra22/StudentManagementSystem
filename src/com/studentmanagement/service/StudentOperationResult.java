@@ -1,4 +1,4 @@
-package service;
+package com.studentmanagement.service;
 
 public class StudentOperationResult {
     private final OperationStatus status;

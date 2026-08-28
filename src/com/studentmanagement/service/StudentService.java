@@ -1,13 +1,19 @@
-package service;
-import dao.StudentDAO;
+package com.studentmanagement.service;
+import com.studentmanagement.dao.StudentDAO;
 
-import model.Student;
+import com.studentmanagement.model.Student;
 import java.util.List;
 
-import exception.StudentManagementException;
+import com.studentmanagement.exception.StudentManagementException;
+import org.springframework.stereotype.Service;
 
+@Service
 public class StudentService {
-    private final StudentDAO studentDAO = new StudentDAO();
+    private final StudentDAO studentDAO;
+
+    public StudentService(StudentDAO studentDAO){
+        this.studentDAO = studentDAO;
+    }
     public Student findStudentById(int id) throws StudentManagementException{
         return studentDAO.findStudentById(id);
     }

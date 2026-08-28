@@ -1,18 +1,18 @@
-package dao;
+package com.studentmanagement.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.ResultSet;
-import model.Student;
+import com.studentmanagement.model.Student;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import exception.StudentManagementException;
+import com.studentmanagement.exception.StudentManagementException;
+import org.springframework.stereotype.Repository;
 
-
-
+@Repository
 public class StudentDAO {
     private final String url = "jdbc:mysql://localhost:3306/student_management";
     private final String user = "root";

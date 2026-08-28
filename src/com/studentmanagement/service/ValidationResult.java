@@ -1,4 +1,4 @@
-package service;
+package com.studentmanagement.service;
 
 public enum ValidationResult {
     VALID,

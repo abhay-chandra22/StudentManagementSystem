@@ -1,4 +1,4 @@
-package exception;
+package com.studentmanagement.exception;
 
 public class StudentManagementException extends Exception{
     public StudentManagementException(String message){
