@@ -1,8 +1,8 @@
 package service;
 
 public class StudentOperationResult {
-    private OperationStatus status;
-    private ValidationResult validationResult;
+    private final OperationStatus status;
+    private final ValidationResult validationResult;
     public StudentOperationResult(OperationStatus status , ValidationResult validationResult){
         this.status = status;
         this.validationResult = validationResult;
