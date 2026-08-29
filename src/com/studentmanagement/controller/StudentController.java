@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.studentmanagement.exception.StudentManagementException;
 import com.studentmanagement.model.Student;
 import java.util.List;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 public class StudentController {
@@ -18,5 +19,10 @@ public class StudentController {
     @GetMapping("/students")
     public List<Student> getAllStudents() throws StudentManagementException{
         return studentService.getAllStudents();
+    }
+
+    @GetMapping("/students/{id}")
+    public Student getStudent(@PathVariable int id) throws StudentManagementException{
+        return studentService.findStudentById(id);
     }
 }
