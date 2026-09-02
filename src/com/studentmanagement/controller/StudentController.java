@@ -1,6 +1,7 @@
 package com.studentmanagement.controller;
 
 import com.studentmanagement.service.OperationStatus;
+import jdk.dynalink.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 import com.studentmanagement.service.StudentService;
@@ -15,6 +16,7 @@ import com.studentmanagement.service.StudentOperationResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.http.HttpStatus;
 import com.studentmanagement.service.OperationStatus;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 public class StudentController {
@@ -48,6 +50,20 @@ public class StudentController {
             return ResponseEntity.badRequest().body(result);
         }else if(result.getStatus() == OperationStatus.DUPLICATE_ID){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
+        }
+        return ResponseEntity.badRequest().body(result);
+    }
+
+    @PutMapping("/students/{id}")
+    public ResponseEntity<StudentOperationResult> updateStudent(@PathVariable int id , @RequestBody Student student) throws StudentManagementException{
+        student.setId(id);
+        StudentOperationResult result = studentService.updateStudent(student);
+        if(result.getStatus() == OperationStatus.SUCCESS){
+            return ResponseEntity.ok(result);
+        }else if(result.getStatus() == OperationStatus.INVALID_DATA){
+            return ResponseEntity.badRequest().body(result);
+        }else if(result.getStatus() == OperationStatus.STUDENT_NOT_FOUND){
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.badRequest().body(result);
     }
