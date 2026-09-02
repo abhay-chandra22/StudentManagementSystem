@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.http.HttpStatus;
 import com.studentmanagement.service.OperationStatus;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 @RestController
 public class StudentController {
@@ -62,6 +63,17 @@ public class StudentController {
             return ResponseEntity.ok(result);
         }else if(result.getStatus() == OperationStatus.INVALID_DATA){
             return ResponseEntity.badRequest().body(result);
+        }else if(result.getStatus() == OperationStatus.STUDENT_NOT_FOUND){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.badRequest().body(result);
+    }
+
+    @DeleteMapping("/students/{id}")
+    public ResponseEntity<StudentOperationResult> deleteStudent(@PathVariable int id) throws StudentManagementException{
+        StudentOperationResult result = studentService.deleteStudent(id);
+        if(result.getStatus() == OperationStatus.SUCCESS){
+            return ResponseEntity.noContent().build();
         }else if(result.getStatus() == OperationStatus.STUDENT_NOT_FOUND){
             return ResponseEntity.notFound().build();
         }
