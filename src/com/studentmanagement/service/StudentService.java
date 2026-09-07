@@ -60,6 +60,10 @@ public class StudentService {
             return new StudentOperationResult(OperationStatus.STUDENT_NOT_FOUND , null);
         }
     }
+
+    public List<Student> findStudentsByCourse(String course) throws StudentManagementException{
+        return studentDAO.findStudentsByCourse(course);
+    }
     private ValidationResult validateStudent(Student student){
         if(student.getId() < 1){
             return ValidationResult.INVALID_ID;

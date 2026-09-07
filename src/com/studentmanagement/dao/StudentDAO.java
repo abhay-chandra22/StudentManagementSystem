@@ -127,4 +127,30 @@ public class StudentDAO {
         }
         return students;
     }
+
+    public List<Student> findStudentsByCourse(String course) throws StudentManagementException{
+        List<Student> students = new ArrayList<>();
+        String sql = "SELECT * FROM students WHERE course = ?";
+        try(
+                Connection conn = getConnection();
+                PreparedStatement preparedStatement = conn.prepareStatement(sql);
+        ){
+            preparedStatement.setString(1 , course);
+            try(ResultSet resultSet = preparedStatement.executeQuery()){
+                while(resultSet.next()){
+                    int studentId = resultSet.getInt("id");
+                    String name = resultSet.getString("name");
+                    String email = resultSet.getString("email");
+                    int age = resultSet.getInt("age");
+                    String StudentCourse = resultSet.getString("course");
+
+                    Student student = new Student(studentId, name, email, age, StudentCourse);
+                    students.add(student);
+                }
+            }
+        }catch (SQLException e){
+            throw new StudentManagementException("Database operation failed" , e);
+        }
+        return students;
+    }
 }

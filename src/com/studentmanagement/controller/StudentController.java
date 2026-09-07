@@ -1,7 +1,7 @@
 package com.studentmanagement.controller;
 
 import com.studentmanagement.service.OperationStatus;
-import jdk.dynalink.Operation;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 import com.studentmanagement.service.StudentService;
@@ -14,10 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.studentmanagement.service.StudentOperationResult;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.http.HttpStatus;
-import com.studentmanagement.service.OperationStatus;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 public class StudentController {
@@ -78,5 +77,10 @@ public class StudentController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.badRequest().body(result);
+    }
+    
+    @GetMapping("/students/search")
+    public List<Student> searchStudent(@RequestParam String course) throws StudentManagementException{
+        return studentService.findStudentsByCourse(course);
     }
 }
