@@ -64,6 +64,11 @@ public class StudentService {
     public List<Student> findStudentsByCourse(String course) throws StudentManagementException{
         return studentDAO.findStudentsByCourse(course);
     }
+
+    public List<Student> findStudentsByCourseAndAge(String course , int age) throws StudentManagementException{
+        return studentDAO.findStudentsByCourseAndAge(course, age);
+    }
+
     private ValidationResult validateStudent(Student student){
         if(student.getId() < 1){
             return ValidationResult.INVALID_ID;

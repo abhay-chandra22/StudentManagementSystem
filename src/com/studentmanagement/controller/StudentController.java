@@ -78,9 +78,15 @@ public class StudentController {
         }
         return ResponseEntity.badRequest().body(result);
     }
-    
+
+    /*
     @GetMapping("/students/search")
     public List<Student> searchStudent(@RequestParam String course) throws StudentManagementException{
         return studentService.findStudentsByCourse(course);
+    }*/
+
+    @GetMapping("/students/search")
+    public List<Student> searchStudents(@RequestParam String course , @RequestParam int age) throws StudentManagementException{
+        return studentService.findStudentsByCourseAndAge(course , age);
     }
 }

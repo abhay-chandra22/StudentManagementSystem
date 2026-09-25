@@ -153,4 +153,31 @@ public class StudentDAO {
         }
         return students;
     }
+
+    public List<Student> findStudentsByCourseAndAge(String course , int age) throws StudentManagementException{
+        String sql = "SELECT * FROM students WHERE COURSE = ? AND AGE = ?";
+        List<Student> students = new ArrayList<>();
+        try(
+                Connection conn = getConnection();
+                PreparedStatement preparedStatement = conn.prepareStatement(sql);
+                ){
+            preparedStatement.setString(1 , course);
+            preparedStatement.setInt(2 , age);
+            try(ResultSet resultSet = preparedStatement.executeQuery()){
+                while(resultSet.next()){
+                    int studentId = resultSet.getInt("id");
+                    String name = resultSet.getString("name");
+                    String email = resultSet.getString("email");
+                    int studentAge = resultSet.getInt("age");
+                    String studentCourse = resultSet.getString("course");
+
+                    Student student = new Student(studentId, name, email, studentAge, studentCourse);
+                    students.add(student);
+                }
+            }
+        }catch (SQLException e){
+            throw new StudentManagementException("Database operation failed" , e);
+        }
+        return students;
+    }
 }
