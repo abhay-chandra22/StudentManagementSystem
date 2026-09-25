@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.studentmanagement.exception.ErrorResponse;
 
 @RestController
 public class StudentController {
@@ -79,14 +80,23 @@ public class StudentController {
         return ResponseEntity.badRequest().body(result);
     }
 
-    /*
-    @GetMapping("/students/search")
-    public List<Student> searchStudent(@RequestParam String course) throws StudentManagementException{
-        return studentService.findStudentsByCourse(course);
-    }*/
-
     @GetMapping("/students/search")
     public List<Student> searchStudents(@RequestParam String course , @RequestParam int age) throws StudentManagementException{
         return studentService.findStudentsByCourseAndAge(course , age);
+    }
+
+    @GetMapping("/students/page")
+    public ResponseEntity<?> getStudentsByPage(@RequestParam int page , @RequestParam int size) throws StudentManagementException{
+        if(page < 0){
+            ErrorResponse errorResponse = new ErrorResponse(400 , "Page number cannot be negative");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if(size <= 0){
+            ErrorResponse errorResponse = new ErrorResponse(400 , "Size cannot be less than 1");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        List<Student> students = studentService.getAllStudentsByPage(page , size);
+        return ResponseEntity.ok(students);
     }
 }

@@ -21,6 +21,11 @@ public class StudentService {
     public List<Student> getAllStudents() throws StudentManagementException{
         return studentDAO.getAllStudents();
     }
+
+    public List<Student> getAllStudentsByPage(int page , int size) throws StudentManagementException{
+        return studentDAO.getAllStudentsByPage(page , size);
+    }
+
     public StudentOperationResult addStudent(Student student) throws StudentManagementException{
         ValidationResult validationResult = validateStudent(student);
         if(validationResult != ValidationResult.VALID){

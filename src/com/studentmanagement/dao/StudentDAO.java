@@ -128,6 +128,34 @@ public class StudentDAO {
         return students;
     }
 
+    public List<Student> getAllStudentsByPage(int page, int size) throws StudentManagementException{
+        List<Student> students = new ArrayList<>();
+        String sql = "SELECT * FROM students ORDER BY id LIMIT ? OFFSET ?";
+
+        try(
+                Connection conn = getConnection();
+                PreparedStatement preparedStatement = conn.prepareStatement(sql);
+                ){
+            preparedStatement.setInt(1 , size);
+            preparedStatement.setInt(2 , page * size);
+            try(ResultSet resultSet = preparedStatement.executeQuery()){
+                while(resultSet.next()){
+                    int studentId = resultSet.getInt("id");
+                    String name = resultSet.getString("name");
+                    String email = resultSet.getString("email");
+                    int age = resultSet.getInt("age");
+                    String course = resultSet.getString("course");
+
+                    Student student = new Student(studentId, name, email, age, course);
+                    students.add(student);
+                }
+            }
+        }catch(SQLException e){
+            throw new StudentManagementException("Database operation failed" , e);
+        }
+        return students;
+    }
+
     public List<Student> findStudentsByCourse(String course) throws StudentManagementException{
         List<Student> students = new ArrayList<>();
         String sql = "SELECT * FROM students WHERE course = ?";
