@@ -128,9 +128,17 @@ public class StudentDAO {
         return students;
     }
 
-    public List<Student> getAllStudentsByPage(int page, int size) throws StudentManagementException{
+    public List<Student> getAllStudentsByPage(int page, int size , String sortBy) throws StudentManagementException{
         List<Student> students = new ArrayList<>();
-        String sql = "SELECT * FROM students ORDER BY id LIMIT ? OFFSET ?";
+        String sortColumn;
+        switch(sortBy){
+            case "name": sortColumn = "name"; break;
+            case "email": sortColumn = "email"; break;
+            case "age": sortColumn = "age"; break;
+            case "course": sortColumn = "course"; break;
+            default: sortColumn = "id" ; break;
+        }
+        String sql = "SELECT * FROM students ORDER BY " + sortColumn + " LIMIT ? OFFSET ?";
 
         try(
                 Connection conn = getConnection();

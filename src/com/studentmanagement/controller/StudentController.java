@@ -87,7 +87,7 @@ public class StudentController {
     }
 
     @GetMapping("/students/page")
-    public ResponseEntity<?> getStudentsByPage(@RequestParam int page , @RequestParam int size) throws StudentManagementException{
+    public ResponseEntity<?> getStudentsByPage(@RequestParam int page , @RequestParam int size , @RequestParam(defaultValue = "id") String sortBy) throws StudentManagementException{
         if(page < 0){
             ErrorResponse errorResponse = new ErrorResponse(400 , "Page number cannot be negative");
             return ResponseEntity.badRequest().body(errorResponse);
@@ -97,7 +97,12 @@ public class StudentController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
-        StudentPageResponse response = studentService.getStudentsPage(page , size);
+        if(!sortBy.equals("id") && !sortBy.equals("name") && !sortBy.equals("email") && !sortBy.equals("age") && !sortBy.equals("course")){
+            ErrorResponse errorResponse = new ErrorResponse(400 , "Invalid sort field");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        StudentPageResponse response = studentService.getStudentsPage(page , size , sortBy);
         return ResponseEntity.ok(response);
     }
 }
