@@ -208,4 +208,23 @@ public class StudentDAO {
         }
         return students;
     }
+
+    public int countStudents() throws StudentManagementException{
+        String sql = "SELECT COUNT(*) FROM students";
+        try(
+                Connection conn = getConnection();
+                PreparedStatement preparedStatement = conn.prepareStatement(sql);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                ){
+
+            if(resultSet.next()){
+                return resultSet.getInt(1);
+            }
+
+            return 0;
+
+        }catch(SQLException e){
+            throw new StudentManagementException("Database operation failed" , e);
+        }
+    }
 }

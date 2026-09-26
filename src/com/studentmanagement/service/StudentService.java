@@ -5,6 +5,7 @@ import com.studentmanagement.model.Student;
 import java.util.List;
 
 import com.studentmanagement.exception.StudentManagementException;
+import com.studentmanagement.model.StudentPageResponse;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -72,6 +73,19 @@ public class StudentService {
 
     public List<Student> findStudentsByCourseAndAge(String course , int age) throws StudentManagementException{
         return studentDAO.findStudentsByCourseAndAge(course, age);
+    }
+
+    public int countStudents() throws StudentManagementException{
+        return studentDAO.countStudents();
+    }
+
+    public StudentPageResponse getStudentsPage(int page , int size) throws StudentManagementException{
+        List<Student> students = getAllStudentsByPage(page , size);
+        int totalStudents = countStudents();
+
+        int totalPages = (totalStudents + size - 1) / size ;
+
+        return new StudentPageResponse(students , page , size , totalStudents , totalPages);
     }
 
     private ValidationResult validateStudent(Student student){

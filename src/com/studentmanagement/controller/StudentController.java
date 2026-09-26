@@ -1,5 +1,6 @@
 package com.studentmanagement.controller;
 
+import com.studentmanagement.model.StudentPageResponse;
 import com.studentmanagement.service.OperationStatus;
 
 import org.springframework.http.HttpStatus;
@@ -96,7 +97,7 @@ public class StudentController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
-        List<Student> students = studentService.getAllStudentsByPage(page , size);
-        return ResponseEntity.ok(students);
+        StudentPageResponse response = studentService.getStudentsPage(page , size);
+        return ResponseEntity.ok(response);
     }
 }
