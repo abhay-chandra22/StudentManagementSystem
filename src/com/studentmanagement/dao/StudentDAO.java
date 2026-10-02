@@ -242,4 +242,74 @@ public class StudentDAO {
             throw new StudentManagementException("Database operation failed" , e);
         }
     }
+
+    public List<Student> findStudentsByCourseAndAge(String course , int age , int page , int size , String sortBy , String sortDir) throws StudentManagementException{
+        String sortColumn;
+
+        switch (sortBy) {
+            case "name": sortColumn = "name"; break;
+            case "email": sortColumn = "email"; break;
+            case "age": sortColumn = "age"; break;
+            case "course": sortColumn = "course"; break;
+            default: sortColumn = "id";
+        }
+
+        String sortDirection;
+
+        if (sortDir.equals("desc")) {
+            sortDirection = "DESC";
+        } else {
+            sortDirection = "ASC";
+        }
+
+        String sql = "SELECT * FROM students WHERE COURSE = ? AND AGE = ? " + "ORDER BY " +  sortColumn + " " + sortDirection + " LIMIT ? OFFSET ?";
+        List<Student> students = new ArrayList<>();
+        try(
+                Connection conn = getConnection();
+                PreparedStatement preparedStatement = conn.prepareStatement(sql)
+                ){
+                    preparedStatement.setString(1 , course);
+                    preparedStatement.setInt(2 , age);
+                    preparedStatement.setInt(3, size);
+                    preparedStatement.setInt(4, page*size);
+                    try(ResultSet resultSet = preparedStatement.executeQuery()){
+                        while(resultSet.next()){
+                            int StudentId = resultSet.getInt("id");
+                            String name = resultSet.getString("name");
+                            String email = resultSet.getString("email");
+                            int StudnetAge = resultSet.getInt("age");
+                            String StudentCourse = resultSet.getString("course");
+
+                            Student student = new Student(StudentId, name, email, StudnetAge, StudentCourse);
+                            students.add(student);
+                        }
+                    }
+        }catch (SQLException e){
+            throw new StudentManagementException("Database operation failed" , e);
+        }
+
+        return students;
+    }
+
+    public int countStudentsByCourseAndAge(String course , int age) throws StudentManagementException{
+        String sql = "SELECT COUNT(*) FROM students WHERE COURSE = ? AND AGE = ?";
+        try(
+                Connection conn = getConnection();
+                PreparedStatement preparedStatement = conn.prepareStatement(sql);
+
+        ){      preparedStatement.setString(1 , course);
+                preparedStatement.setInt(2 , age);
+                try(ResultSet resultSet = preparedStatement.executeQuery()) {
+
+                    if (resultSet.next()) {
+                        return resultSet.getInt(1);
+                    }
+
+                    return 0;
+                }
+        }catch(SQLException e){
+            throw new StudentManagementException("Database operation failed" , e);
+        }
+    }
+
 }

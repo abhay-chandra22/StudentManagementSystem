@@ -88,6 +88,19 @@ public class StudentService {
         return new StudentPageResponse(students , page , size , totalStudents , totalPages);
     }
 
+    public int countStudentsByCourseAndAge(String course , int age) throws StudentManagementException{
+        return studentDAO.countStudentsByCourseAndAge(course, age);
+    }
+
+    public StudentPageResponse getStudentsByCourseAndAgePage(String course , int age , int page, int size , String sortBy , String sortDir) throws StudentManagementException{
+        List<Student> students = studentDAO.findStudentsByCourseAndAge(course, age , page , size , sortBy , sortDir);
+        int totalStudents = countStudentsByCourseAndAge(course , age);
+
+        int totalPages = (totalStudents + size - 1) / size;
+
+        return new StudentPageResponse(students , page, size, totalStudents , totalPages);
+    }
+
     private ValidationResult validateStudent(Student student){
         if(student.getId() < 1){
             return ValidationResult.INVALID_ID;

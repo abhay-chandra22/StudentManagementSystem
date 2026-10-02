@@ -19,13 +19,16 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.studentmanagement.exception.ErrorResponse;
+import org.springframework.web.servlet.View;
 
 @RestController
 public class StudentController {
     private final StudentService studentService;
+    private final View error;
 
-    public StudentController(StudentService studentService){
+    public StudentController(StudentService studentService, View error){
         this.studentService = studentService;
+        this.error = error;
     }
 
     @GetMapping("/students")
@@ -110,4 +113,37 @@ public class StudentController {
         StudentPageResponse response = studentService.getStudentsPage(page , size , sortBy , sortDir);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/students/search/page")
+    public ResponseEntity<?> searchStudentsPage(@RequestParam String course , @RequestParam int age , @RequestParam int page , @RequestParam int size , @RequestParam(defaultValue = "id") String sortBy , @RequestParam(defaultValue = "asc") String sortDir) throws StudentManagementException{
+        if(course.isBlank()){
+            ErrorResponse errorResponse = new ErrorResponse(400, "Course cannot be blank");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if(age <= 0){
+            ErrorResponse errorResponse = new ErrorResponse(400, "Age must be greater than 0");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        if(page < 0){
+            ErrorResponse errorResponse = new ErrorResponse(400 , "Page number cannot be negative");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if(size <= 0){
+            ErrorResponse errorResponse = new ErrorResponse(400 , "Size cannot be less than 1");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if(!sortBy.equals("id") && !sortBy.equals("name") && !sortBy.equals("email") && !sortBy.equals("age") && !sortBy.equals("course")) {
+            ErrorResponse errorResponse = new ErrorResponse(400, "Invalid sort field");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if(!sortDir.equals("asc") && !sortDir.equals("desc")){
+            ErrorResponse errorResponse = new ErrorResponse(400, "Invalid sort direction");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        StudentPageResponse response = studentService.getStudentsByCourseAndAgePage(course , age , page , size , sortBy , sortDir);
+        return ResponseEntity.ok(response);
+    }
+
 }
