@@ -128,7 +128,7 @@ public class StudentDAO {
         return students;
     }
 
-    public List<Student> getAllStudentsByPage(int page, int size , String sortBy) throws StudentManagementException{
+    public List<Student> getAllStudentsByPage(int page, int size , String sortBy , String sortDir) throws StudentManagementException{
         List<Student> students = new ArrayList<>();
         String sortColumn;
         switch(sortBy){
@@ -138,7 +138,14 @@ public class StudentDAO {
             case "course": sortColumn = "course"; break;
             default: sortColumn = "id" ; break;
         }
-        String sql = "SELECT * FROM students ORDER BY " + sortColumn + " LIMIT ? OFFSET ?";
+
+        String sortDirection;
+        if(sortDir.equals("desc")){
+            sortDirection = "DESC";
+        }else{
+            sortDirection = "ASC";
+        }
+        String sql = "SELECT * FROM students ORDER BY " + sortColumn + " " + sortDirection +  " LIMIT ? OFFSET ?";
 
         try(
                 Connection conn = getConnection();

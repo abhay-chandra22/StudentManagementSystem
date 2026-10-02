@@ -23,8 +23,8 @@ public class StudentService {
         return studentDAO.getAllStudents();
     }
 
-    public List<Student> getAllStudentsByPage(int page , int size , String sortBy) throws StudentManagementException{
-        return studentDAO.getAllStudentsByPage(page , size , sortBy);
+    public List<Student> getAllStudentsByPage(int page , int size , String sortBy , String sortDir) throws StudentManagementException{
+        return studentDAO.getAllStudentsByPage(page , size , sortBy , sortDir);
     }
 
     public StudentOperationResult addStudent(Student student) throws StudentManagementException{
@@ -79,8 +79,8 @@ public class StudentService {
         return studentDAO.countStudents();
     }
 
-    public StudentPageResponse getStudentsPage(int page , int size , String sortBy) throws StudentManagementException{
-        List<Student> students = getAllStudentsByPage(page , size , sortBy);
+    public StudentPageResponse getStudentsPage(int page , int size , String sortBy , String sortDir) throws StudentManagementException{
+        List<Student> students = getAllStudentsByPage(page , size , sortBy , sortDir);
         int totalStudents = countStudents();
 
         int totalPages = (totalStudents + size - 1) / size ;

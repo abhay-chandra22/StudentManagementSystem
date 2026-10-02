@@ -87,7 +87,7 @@ public class StudentController {
     }
 
     @GetMapping("/students/page")
-    public ResponseEntity<?> getStudentsByPage(@RequestParam int page , @RequestParam int size , @RequestParam(defaultValue = "id") String sortBy) throws StudentManagementException{
+    public ResponseEntity<?> getStudentsByPage(@RequestParam int page , @RequestParam int size , @RequestParam(defaultValue = "id") String sortBy , @RequestParam(defaultValue = "asc") String sortDir) throws StudentManagementException{
         if(page < 0){
             ErrorResponse errorResponse = new ErrorResponse(400 , "Page number cannot be negative");
             return ResponseEntity.badRequest().body(errorResponse);
@@ -102,7 +102,12 @@ public class StudentController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
-        StudentPageResponse response = studentService.getStudentsPage(page , size , sortBy);
+        if(!sortDir.equals("asc") && !sortDir.equals("desc")){
+            ErrorResponse errorResponse = new ErrorResponse(400, "Invalid sort direction");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        StudentPageResponse response = studentService.getStudentsPage(page , size , sortBy , sortDir);
         return ResponseEntity.ok(response);
     }
 }
