@@ -1,11 +1,10 @@
 package com.studentmanagement.controller;
 
 import com.studentmanagement.model.StudentPageResponse;
-import com.studentmanagement.service.OperationStatus;
+import com.studentmanagement.service.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
-import com.studentmanagement.service.StudentService;
 import org.springframework.web.bind.annotation.GetMapping;
 import com.studentmanagement.exception.StudentManagementException;
 import com.studentmanagement.model.Student;
@@ -13,22 +12,20 @@ import java.util.List;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
-import com.studentmanagement.service.StudentOperationResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.studentmanagement.exception.ErrorResponse;
-import org.springframework.web.servlet.View;
 
 @RestController
 public class StudentController {
     private final StudentService studentService;
-    private final View error;
+    private final PaginationValidator paginationValidator;
 
-    public StudentController(StudentService studentService, View error){
+    public StudentController(StudentService studentService , PaginationValidator paginationValidator){
         this.studentService = studentService;
-        this.error = error;
+        this.paginationValidator = paginationValidator;
     }
 
     @GetMapping("/students")
@@ -91,22 +88,27 @@ public class StudentController {
 
     @GetMapping("/students/page")
     public ResponseEntity<?> getStudentsByPage(@RequestParam int page , @RequestParam int size , @RequestParam(defaultValue = "id") String sortBy , @RequestParam(defaultValue = "asc") String sortDir) throws StudentManagementException{
-        if(page < 0){
-            ErrorResponse errorResponse = new ErrorResponse(400 , "Page number cannot be negative");
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
-        if(size <= 0){
-            ErrorResponse errorResponse = new ErrorResponse(400 , "Size cannot be less than 1");
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
 
-        if(!sortBy.equals("id") && !sortBy.equals("name") && !sortBy.equals("email") && !sortBy.equals("age") && !sortBy.equals("course")){
-            ErrorResponse errorResponse = new ErrorResponse(400 , "Invalid sort field");
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
-
-        if(!sortDir.equals("asc") && !sortDir.equals("desc")){
-            ErrorResponse errorResponse = new ErrorResponse(400, "Invalid sort direction");
+        PaginationValidationResult validationResult = paginationValidator.validate(page,size,sortBy,sortDir);
+        if(validationResult != PaginationValidationResult.VALID){
+            String message;
+            switch(validationResult){
+                case INVALID_PAGE :
+                    message = "Page number cannot be negative";
+                    break;
+                case INVALID_SIZE:
+                    message = "Page size must be greater than 0";
+                    break;
+                case INVALID_SORT_FIELD:
+                    message = "Invalid sort field";
+                    break;
+                case INVALID_SORT_DIRECTION:
+                    message = "Invalid sort direction";
+                    break;
+                default :
+                    message = "Invalid Pagination Parameters";
+            }
+            ErrorResponse errorResponse = new ErrorResponse(400 , message);
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
@@ -125,20 +127,26 @@ public class StudentController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
-        if(page < 0){
-            ErrorResponse errorResponse = new ErrorResponse(400 , "Page number cannot be negative");
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
-        if(size <= 0){
-            ErrorResponse errorResponse = new ErrorResponse(400 , "Size cannot be less than 1");
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
-        if(!sortBy.equals("id") && !sortBy.equals("name") && !sortBy.equals("email") && !sortBy.equals("age") && !sortBy.equals("course")) {
-            ErrorResponse errorResponse = new ErrorResponse(400, "Invalid sort field");
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
-        if(!sortDir.equals("asc") && !sortDir.equals("desc")){
-            ErrorResponse errorResponse = new ErrorResponse(400, "Invalid sort direction");
+        PaginationValidationResult validationResult = paginationValidator.validate(page,size,sortBy,sortDir);
+        if(validationResult != PaginationValidationResult.VALID){
+            String message;
+            switch(validationResult){
+                case INVALID_PAGE :
+                    message = "Page number cannot be negative";
+                    break;
+                case INVALID_SIZE:
+                    message = "Page size must be greater than 0";
+                    break;
+                case INVALID_SORT_FIELD:
+                    message = "Invalid sort field";
+                    break;
+                case INVALID_SORT_DIRECTION:
+                    message = "Invalid sort direction";
+                    break;
+                default :
+                    message = "Invalid Pagination Parameters";
+            }
+            ErrorResponse errorResponse = new ErrorResponse(400 , message);
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
