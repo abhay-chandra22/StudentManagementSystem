@@ -22,6 +22,8 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 
 @OpenAPIDefinition(
@@ -52,7 +54,10 @@ public class StudentController {
     )
     @ApiResponse(
             responseCode = "500",
-            description = "Database operation failed"
+            description = "Database operation failed",
+            content = @Content(
+                    schema = @Schema(implementation = ErrorResponse.class)
+            )
     )
     @GetMapping("/students")
     public List<Student> getAllStudents() throws StudentManagementException{
@@ -65,11 +70,15 @@ public class StudentController {
     )
     @ApiResponse(
             responseCode = "200",
-            description = "Student retrieved successfully"
+            description = "Student retrieved successfully",
+            content = @Content(
+                    schema = @Schema(implementation = Student.class)
+            )
     )
     @ApiResponse(
             responseCode = "404",
-            description = "Student not found"
+            description = "Student not found",
+            content = @Content
     )
     @GetMapping("/students/{id}")
     public ResponseEntity<Student> getStudent(@PathVariable int id) throws StudentManagementException{
@@ -87,15 +96,31 @@ public class StudentController {
     )
     @ApiResponse(
             responseCode = "201",
-            description = "Student created successfully"
+            description = "Student created successfully",
+            content = @Content(
+                    schema = @Schema(implementation = StudentOperationResult.class)
+            )
     )
     @ApiResponse(
             responseCode = "400",
-            description = "Invalid student data"
+            description = "Invalid student data",
+            content = @Content(
+                    schema = @Schema(implementation = StudentOperationResult.class)
+            )
     )
     @ApiResponse(
             responseCode = "409",
-            description = "Student ID already exists"
+            description = "Student ID already exists",
+            content =  @Content(
+                    schema = @Schema(implementation = StudentOperationResult.class)
+            )
+    )
+    @ApiResponse(
+            responseCode = "500",
+            description = "Database operation failed",
+            content = @Content(
+                    schema = @Schema(implementation = ErrorResponse.class)
+            )
     )
     @PostMapping("/students")
     public ResponseEntity<StudentOperationResult> addStudent(@RequestBody Student student) throws StudentManagementException{
@@ -116,15 +141,29 @@ public class StudentController {
     )
     @ApiResponse(
             responseCode = "200",
-            description = "Student Updated successfully"
+            description = "Student Updated successfully",
+            content = @Content(
+                    schema = @Schema(implementation = StudentOperationResult.class)
+            )
     )
     @ApiResponse(
             responseCode = "400",
-            description = "Invalid student data"
+            description = "Invalid student data",
+            content = @Content(
+                    schema = @Schema(implementation = StudentOperationResult.class)
+            )
     )
     @ApiResponse(
             responseCode = "404",
-            description = "Student not found"
+            description = "Student not found",
+            content = @Content
+    )
+    @ApiResponse(
+            responseCode = "500",
+            description = "Database Operation Failed",
+            content = @Content(
+                    schema = @Schema(implementation = ErrorResponse.class)
+            )
     )
     @PutMapping("/students/{id}")
     public ResponseEntity<StudentOperationResult> updateStudent(@PathVariable int id , @RequestBody Student student) throws StudentManagementException{
@@ -146,11 +185,20 @@ public class StudentController {
     )
     @ApiResponse(
             responseCode = "204",
-            description = "Student deleted successfully"
+            description = "Student deleted successfully",
+            content = @Content
     )
     @ApiResponse(
             responseCode = "404",
-            description = "Student not found"
+            description = "Student not found",
+            content = @Content
+    )
+    @ApiResponse(
+            responseCode = "500",
+            description = "Database operation failed",
+            content = @Content(
+                    schema = @Schema(implementation = ErrorResponse.class)
+            )
     )
     @DeleteMapping("/students/{id}")
     public ResponseEntity<StudentOperationResult> deleteStudent(@PathVariable int id) throws StudentManagementException{
@@ -173,7 +221,17 @@ public class StudentController {
     )
     @ApiResponse(
             responseCode = "400",
-            description = "Invalid course or age parameter"
+            description = "Invalid query parameter",
+            content = @Content(
+                    schema = @Schema(implementation = ErrorResponse.class)
+            )
+    )
+    @ApiResponse(
+            responseCode = "500",
+            description = "Database operation failed",
+            content = @Content(
+                    schema = @Schema(implementation = ErrorResponse.class)
+            )
     )
     @GetMapping("/students/search")
     public List<Student> searchStudents(@RequestParam String course , @RequestParam int age) throws StudentManagementException{
@@ -183,6 +241,27 @@ public class StudentController {
     @Operation(
             summary = "Get paginated students",
             description = "Retrieves students with pagination and optional sorting"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "Students retrieved successfully",
+            content = @Content(
+                    schema = @Schema(implementation = StudentPageResponse.class)
+            )
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "Invalid pagination or sorting parameters",
+            content = @Content(
+                    schema = @Schema(implementation = ErrorResponse.class)
+            )
+    )
+    @ApiResponse(
+            responseCode = "500",
+            description = "Database operation failed",
+            content = @Content(
+                    schema = @Schema(implementation = ErrorResponse.class)
+            )
     )
     @GetMapping("/students/page")
     public ResponseEntity<?> getStudentsByPage(
@@ -241,15 +320,24 @@ public class StudentController {
     )
     @ApiResponse(
             responseCode = "200",
-            description = "Students retrieved successfully"
+            description = "Students retrieved successfully",
+            content = @Content(
+                    schema = @Schema(implementation = StudentPageResponse.class)
+            )
     )
     @ApiResponse(
             responseCode = "400",
-            description = "Invalid course, age, pagination, or sorting parameters"
+            description = "Invalid course, age, pagination, or sorting parameters",
+            content = @Content(
+                    schema = @Schema(implementation = ErrorResponse.class)
+            )
     )
     @ApiResponse(
             responseCode = "500",
-            description = "Database operation failed"
+            description = "Database operation failed",
+            content = @Content(
+                    schema = @Schema(implementation = ErrorResponse.class)
+            )
     )
     @GetMapping("/students/search/page")
     public ResponseEntity<?> searchStudentsPage(
