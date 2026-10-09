@@ -1,26 +1,26 @@
 package com.studentmanagement.dao;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.ResultSet;
 import com.studentmanagement.model.Student;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.studentmanagement.exception.StudentManagementException;
 import org.springframework.stereotype.Repository;
+import javax.sql.DataSource;
 
 @Repository
 public class StudentDAO {
-    private final String url = "jdbc:mysql://localhost:3306/student_management";
-    private final String user = "root";
-    private final String password = System.getenv("DB_PASSWORD");
+    private final DataSource dataSource;
+
+    public StudentDAO(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     private Connection getConnection() throws SQLException {
-        Connection conn = DriverManager.getConnection(url, user, password);
-        return conn;
+        return dataSource.getConnection();
     }
 
     public int addStudent(Student student) throws StudentManagementException{
