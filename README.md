@@ -1,192 +1,95 @@
 # Student Management System
 
-A RESTful backend application built with **Java, Spring Boot, MySQL, JDBC, and Maven** for managing student records.
+A RESTful backend application built with **Java, Spring Boot, and MySQL** to manage student records. The project demonstrates layered backend architecture, JDBC database access, input validation, consistent HTTP responses, pagination and sorting, API documentation, and automated unit testing with JUnit 5 and Mockito.
 
-The project started as a console-based Java application and was progressively converted into a layered Spring Boot REST API. It now includes CRUD operations, validation, exception handling, searching, pagination, sorting, and Swagger/OpenAPI documentation.
+> **Project status:** Core REST API and service-layer unit tests are implemented. AI integration and Docker support are not implemented yet.
 
 ## Features
 
-- Create a student
-- Get all students
-- Get a student by ID
-- Update a student
-- Delete a student
-- Search students by course and age
-- Pagination with page number and page size
-- Sorting by `id`, `name`, `email`, `age`, or `course`
-- Ascending and descending sorting
-- Combined filtering + pagination + sorting
-- Request validation
-- Custom exception handling
-- Global exception handling with `@ControllerAdvice`
-- Consistent JSON error responses
-- Swagger / OpenAPI documentation
+- **Student CRUD:** create, retrieve, update, and delete student records.
+- **Search:** find students by course and age.
+- **Pagination:** retrieve records page by page with total-result metadata.
+- **Sorting:** sort by supported student fields in ascending or descending order.
+- **Input validation:** checks student fields and pagination/sorting parameters.
+- **Centralized error handling:** structured error responses for malformed requests and application/database errors.
+- **Safe SQL access:** parameterized `PreparedStatement` queries; sortable database columns are selected from an allowlist.
+- **API documentation:** interactive Swagger UI and OpenAPI specification.
+- **Automated tests:** JUnit 5 tests with Mockito mocks so service-layer tests do not require a live MySQL connection.
+- **Externalized database configuration:** database password is read from the `DB_PASSWORD` environment variable rather than stored in source code.
 
 ## Tech Stack
 
-| Technology | Usage |
+| Technology | Purpose |
 |---|---|
 | Java 23 | Programming language |
-| Spring Boot 3.5.5 | Backend framework |
-| Spring Web | REST APIs |
-| Maven | Dependency management and build |
+| Spring Boot 3.5.5 | Application framework |
+| Spring Web | REST endpoints and embedded web server |
+| Spring JDBC / JDBC | Database connection management and SQL access |
 | MySQL | Relational database |
-| JDBC | Database connectivity |
-| PreparedStatement | Parameterized SQL queries |
-| Springdoc OpenAPI | Swagger / API documentation |
-| Postman | API testing |
+| MySQL Connector/J 9.4.0 | MySQL JDBC driver |
+| springdoc-openapi 2.8.17 | Swagger UI and OpenAPI documentation |
+| JUnit 5 | Unit testing |
+| Mockito | Mocking dependencies in unit tests |
+| Maven | Dependency and build management |
+| Postman | Manual REST API testing |
 
-## Project Architecture
+## Architecture
 
-```text
-Client (Postman / Swagger UI)
-             |
-             v
-       Controller Layer
-             |
-             v
-        Service Layer
-             |
-             v
-          DAO Layer
-             |
-             v
-           MySQL
-```
-
-### Package Structure
+The application uses a layered structure to separate HTTP handling, business logic, and database access.
 
 ```text
-com.studentmanagement
-├── controller
-│   └── StudentController.java
-├── dao
-│   └── StudentDAO.java
-├── exception
-│   ├── ErrorResponse.java
-│   ├── GlobalExceptionHandler.java
-│   └── StudentManagementException.java
-├── model
-│   ├── Student.java
-│   └── StudentPageResponse.java
-├── service
-│   ├── OperationStatus.java
-│   ├── PaginationValidationResult.java
-│   ├── PaginationValidator.java
-│   ├── StudentOperationResult.java
-│   ├── StudentService.java
-│   └── ValidationResult.java
-└── StudentManagementSystemApplication.java
+src
+├── main
+│   ├── java
+│   │   └── com.studentmanagement
+│   │       ├── controller
+│   │       │   └── StudentController.java
+│   │       ├── dao
+│   │       │   └── StudentDAO.java
+│   │       ├── exception
+│   │       │   ├── ErrorResponse.java
+│   │       │   ├── GlobalExceptionHandler.java
+│   │       │   └── StudentManagementException.java
+│   │       ├── model
+│   │       │   ├── Student.java
+│   │       │   └── StudentPageResponse.java
+│   │       ├── service
+│   │       │   ├── OperationStatus.java
+│   │       │   ├── PaginationValidationResult.java
+│   │       │   ├── PaginationValidator.java
+│   │       │   ├── StudentOperationResult.java
+│   │       │   ├── StudentService.java
+│   │       │   └── ValidationResult.java
+│   │       └── StudentManagementSystemApplication.java
+│   └── resources
+│       └── application.properties
+└── test
+    └── java
+        └── com.studentmanagement.service
+            ├── PaginationValidatorTest.java
+            ├── StudentServiceTest.java
+            └── StudentServiceQueryTest.java
 ```
 
-## Responsibilities of Each Layer
+### Layer responsibilities
 
-### Controller
+- **Controller:** maps HTTP requests to service calls and returns appropriate HTTP status codes.
+- **Service:** applies student validation and business rules, and builds paginated responses.
+- **DAO:** runs parameterized SQL queries using a Spring-managed `DataSource`.
+- **Model / response classes:** represent student records, pagination metadata, operation outcomes, and errors.
+- **Global exception handler:** converts supported exceptions into structured HTTP error responses.
+- **Tests:** check pagination validation, service behavior, search, and pagination without requiring a real database for these unit tests.
 
-Handles HTTP requests and responses.
+## Prerequisites
 
-Examples:
+Install and configure:
 
-```text
-GET
-POST
-PUT
-DELETE
-```
+- JDK 23
+- Maven (or IntelliJ IDEA with Maven support)
+- MySQL Server and MySQL Workbench (optional, for database administration)
+- Postman (optional, for API testing)
 
-It also performs request-level validation and maps application results to HTTP status codes.
-
-### Service
-
-Contains business logic such as:
-
-- Student validation
-- Duplicate ID checking
-- Pagination calculation
-- Combining filtering, sorting, and pagination
-
-### DAO
-
-Handles database operations using JDBC:
-
-- `Connection`
-- `PreparedStatement`
-- `ResultSet`
-- SQL queries
-
-### Exception Layer
-
-Provides:
-
-- Custom application exception
-- Global exception handling
-- Consistent JSON error responses
-
-## Database Setup
-
-Create the database:
-
-```sql
-CREATE DATABASE student_management;
-```
-
-Select it:
-
-```sql
-USE student_management;
-```
-
-Create the students table:
-
-```sql
-CREATE TABLE students(
-    id INT PRIMARY KEY,
-    name VARCHAR(100),
-    email VARCHAR(100),
-    age INT,
-    course VARCHAR(50)
-);
-```
-
-Example data:
-
-```sql
-INSERT INTO students (id, name, email, age, course)
-VALUES
-(101, 'Abhay Chandra', 'abhay@gmail.com', 22, 'CSE'),
-(102, 'Rahul Singh', 'rahul123@gmail.com', 23, 'CSE'),
-(103, 'Rahul', 'rahul@gmail.com', 22, 'CSE'),
-(104, 'Ayush', 'ayush@gmail.com', 20, 'CSE'),
-(105, 'Arya', 'arya@gmail.com', 22, 'CSE');
-```
-
-## Configuration
-
-The application currently connects to:
-
-```text
-jdbc:mysql://localhost:3306/student_management
-```
-
-The database username is:
-
-```text
-root
-```
-
-The MySQL password is read from the environment variable:
-
-```text
-DB_PASSWORD
-```
-
-### IntelliJ IDEA
-
-Add `DB_PASSWORD` to the Run Configuration environment variables before starting the application.
-
-Do **not** commit the actual database password to GitHub.
-
-## Running the Application
+## Setup and Run
 
 ### 1. Clone the repository
 
@@ -195,357 +98,160 @@ git clone https://github.com/abhay-chandra22/StudentManagementSystem.git
 cd StudentManagementSystem
 ```
 
+### 2. Create the database and table
 
-### 2. Run the Spring Boot application
+Run the following SQL in MySQL Workbench:
 
-Run:
+```sql
+CREATE DATABASE student_management;
+USE student_management;
 
-```text
-StudentManagementSystemApplication
+CREATE TABLE students (
+    id INT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100),
+    age INT,
+    course VARCHAR(50)
+);
 ```
 
-The application runs on:
+The `id` column is the primary key and must be unique.
 
-```text
-http://localhost:8080
+### 3. Configure the database password
+
+The file `src/main/resources/application.properties` should contain:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/student_management
+spring.datasource.username=root
+spring.datasource.password=${DB_PASSWORD}
 ```
 
-## REST API Endpoints
+Set the `DB_PASSWORD` environment variable to the password for your local MySQL `root` account. **Do not replace `${DB_PASSWORD}` with a real password in the committed file.**
 
-### Get all students
+For a temporary PowerShell session, you can set it before starting the application:
 
-```http
-GET /students
+```powershell
+$env:DB_PASSWORD="your_mysql_password"
 ```
 
-Example:
+Alternatively, set `DB_PASSWORD` in the IntelliJ Run Configuration for `StudentManagementSystemApplication`.
 
-```text
-http://localhost:8080/students
+### 4. Run the application
+
+From the project directory, with `DB_PASSWORD` set in the same terminal:
+
+```bash
+mvn spring-boot:run
 ```
 
-Response:
+Or run `StudentManagementSystemApplication.java` from IntelliJ IDEA. The API is available at `http://localhost:8080` by default.
 
-```text
-200 OK
+### 5. Run automated tests
+
+```bash
+mvn test
 ```
 
----
+The current test suite contains 21 unit tests across three classes:
 
-### Get student by ID
+- `PaginationValidatorTest` — pagination and sorting parameter validation.
+- `StudentServiceTest` — create/update/delete outcomes and student validation.
+- `StudentServiceQueryTest` — student lookup, search, and paginated response metadata.
 
-```http
-GET /students/{id}
-```
+These tests use Mockito to simulate DAO behavior and do not require a live database for the tested service logic.
 
-Example:
+## REST API Reference
 
-```text
-http://localhost:8080/students/103
-```
+Base URL: `http://localhost:8080`
 
-Responses:
+| Method | Endpoint | Purpose | Typical successful response |
+|---|---|---|---|
+| `GET` | `/students` | Retrieve all students | `200 OK` |
+| `GET` | `/students/{id}` | Retrieve a student by ID | `200 OK` |
+| `POST` | `/students` | Create a student | `201 Created` |
+| `PUT` | `/students/{id}` | Update an existing student | `200 OK` |
+| `DELETE` | `/students/{id}` | Delete a student | `204 No Content` |
+| `GET` | `/students/search?course=CSE&age=22` | Search by course and age | `200 OK` |
+| `GET` | `/students/page?page=0&size=3` | Retrieve a page of students with optional sorting | `200 OK` |
+| `GET` | `/students/search/page?course=CSE&age=22&page=0&size=3&sortBy=name&sortDir=asc` | Search with pagination and sorting | `200 OK` |
 
-```text
-200 OK
-404 Not Found
-```
+### Pagination and sorting parameters
 
----
+For `/students/page` and `/students/search/page`:
 
-### Add a student
+| Parameter | Required? | Description |
+|---|---|---|
+| `page` | Yes | Zero-based page index; must be `0` or greater |
+| `size` | Yes | Number of records per page; must be greater than `0` |
+| `sortBy` | No | Field to sort by: `id`, `name`, `email`, `age`, or `course`; defaults to `id` |
+| `sortDir` | No | `asc` or `desc`; defaults to `asc` |
 
-```http
-POST /students
-```
+Pagination responses include the returned `students` list and metadata such as `page`, `size`, `totalStudents`, and `totalPages`.
 
-Example request body:
+### Example request body
+
+Use this JSON body with `POST /students`:
 
 ```json
 {
-    "id": 109,
-    "name": "Anuj",
-    "email": "anuj23@gmail.com",
-    "age": 22,
-    "course": "CSE"
+  "id": 201,
+  "name": "Aman Sharma",
+  "email": "aman@example.com",
+  "age": 21,
+  "course": "CSE"
 }
 ```
 
-Responses:
+For `PUT /students/{id}`, provide the student's fields as JSON; the ID in the URL identifies the student being updated.
 
-```text
-201 Created
-400 Bad Request
-409 Conflict
-500 Internal Server Error
-```
+### Common response codes
 
----
+- `200 OK` — request completed successfully.
+- `201 Created` — student created.
+- `204 No Content` — student deleted successfully; response body is empty.
+- `400 Bad Request` — invalid student data, malformed request body, or invalid query/pagination parameters.
+- `404 Not Found` — requested student does not exist.
+- `409 Conflict` — student ID already exists during creation.
+- `500 Internal Server Error` — an application/database operation failed.
 
-### Update a student
+## API Documentation
 
-The student ID is taken from the URL.
+With the application running, open:
 
-```http
-PUT /students/{id}
-```
+- **Swagger UI:** [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+- **OpenAPI JSON:** [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
 
-Example:
+Swagger UI lets you inspect the documented endpoints and try requests against your local application.
 
-```http
-PUT /students/109
-```
+## Testing Approach
 
-Request body:
+- **Unit tests:** JUnit 5 and Mockito test validation and service logic using controlled DAO responses.
+- **Manual API testing:** Postman has been used to check CRUD endpoints, search, pagination, sorting, invalid input, and HTTP status codes.
+- **Database-backed checks:** running the application locally verifies the configured MySQL connection and actual SQL behavior.
 
-```json
-{
-    "name": "Anuj Kumar",
-    "email": "anujkumar@gmail.com",
-    "age": 23,
-    "course": "CSE"
-}
-```
+## Security and Configuration Notes
 
-Responses:
+- Never commit actual passwords, API keys, or other secrets.
+- The database password is supplied through `DB_PASSWORD`.
+- DAO queries use prepared statements for values, while sorting identifiers are chosen from an allowlist.
+- This project currently focuses on backend CRUD and API behavior; authentication/authorization is not yet implemented.
 
-```text
-200 OK
-400 Bad Request
-404 Not Found
-500 Internal Server Error
-```
+## Planned Improvements
 
----
+Possible future enhancements—not included in the current implementation—include:
 
-### Delete a student
-
-```http
-DELETE /students/{id}
-```
-
-Example:
-
-```text
-http://localhost:8080/students/109
-```
-
-Responses:
-
-```text
-204 No Content
-404 Not Found
-500 Internal Server Error
-```
-
----
-
-### Search by course and age
-
-```http
-GET /students/search?course=CSE&age=22
-```
-
-Example:
-
-```text
-http://localhost:8080/students/search?course=CSE&age=22
-```
-
-Returns students matching both conditions.
-
----
-
-## Pagination
-
-The pagination endpoint supports pagination and sorting.
-
-```http
-GET /students/page?page=0&size=3
-```
-
-Default sorting:
-
-```text
-sortBy=id
-sortDir=asc
-```
-
-Example with sorting:
-
-```http
-GET /students/page?page=0&size=3&sortBy=name&sortDir=asc
-```
-
-Supported `sortBy` values:
-
-```text
-id
-name
-email
-age
-course
-```
-
-Supported `sortDir` values:
-
-```text
-asc
-desc
-```
-
-Example response:
-
-```json
-{
-    "students": [
-        {
-            "id": 101,
-            "name": "Abhay Chandra",
-            "email": "abhay@gmail.com",
-            "age": 22,
-            "course": "CSE"
-        }
-    ],
-    "page": 0,
-    "size": 3,
-    "totalStudents": 8,
-    "totalPages": 3
-}
-```
-
-Invalid pagination or sorting parameters return:
-
-```text
-400 Bad Request
-```
-
----
-
-## Search + Pagination + Sorting
-
-The combined endpoint supports filtering, pagination, and sorting in one request:
-
-```http
-GET /students/search/page?course=CSE&age=22&page=0&size=3&sortBy=name&sortDir=asc
-```
-
-This means:
-
-```text
-course = CSE
-age = 22
-page = 0
-size = 3
-sortBy = name
-sortDir = asc
-```
-
-The response contains the matching students and pagination metadata.
-
-## Error Handling
-
-The application uses a global exception handler with `@ControllerAdvice`.
-
-Examples of handled errors:
-
-```text
-StudentManagementException
-→ 500 Internal Server Error
-
-HttpMessageNotReadableException
-→ 400 Bad Request
-
-MethodArgumentTypeMismatchException
-→ 400 Bad Request
-```
-
-Example error response:
-
-```json
-{
-    "status": 400,
-    "message": "Invalid value for parameter: age"
-}
-```
-
-This keeps error responses consistent across the API.
-
-## Swagger / OpenAPI
-
-Interactive API documentation:
-
-```text
-http://localhost:8080/swagger-ui/index.html
-```
-
-OpenAPI specification:
-
-```text
-http://localhost:8080/v3/api-docs
-```
-
-Swagger documents:
-
-- API information
-- HTTP methods
-- Request parameters
-- Request bodies
-- Response codes
-- Response schemas
-- Pagination and sorting parameters
-
-## API Testing
-
-The API has been tested using **Postman**.
-
-Swagger UI can also be used to execute requests directly from the browser.
-
-Typical test cases include:
-
-```text
-Valid CRUD requests
-Invalid student data
-Duplicate student ID
-Student not found
-Invalid JSON request body
-Invalid query parameter types
-Invalid page number
-Invalid page size
-Invalid sort field
-Invalid sort direction
-Pagination across multiple pages
-Filtering with pagination and sorting
-```
-
-## Git Workflow
-
-The project is maintained on the `master` branch.
-
-Meaningful milestones are committed and pushed to GitHub throughout development so the repository history reflects the project's progression.
-
-## Future Improvements
-
-Planned improvements for making the project more production-ready include:
-
-- Externalize database configuration into Spring configuration
-- Introduce DTOs for request/response separation
-- Add automated tests with JUnit and Spring testing
-- Improve validation with Jakarta Bean Validation
-- Improve logging and monitoring
-- Dockerize the application
-- Add Spring Security and JWT authentication
-- Explore microservices architecture
-- Deploy the application to AWS
+- AI-powered natural-language student search using validated structured filters.
+- Controller/API tests using Spring MockMvc.
+- Authentication and authorization with Spring Security.
+- Docker support and a repeatable deployment setup.
+- Continuous integration to run tests automatically on pushes and pull requests.
 
 ## Author
 
-**Abhay Chandra**
+**Abhay Chandra**  
+GitHub: [@abhay-chandra22](https://github.com/abhay-chandra22)
 
-B.Tech Computer Science and Engineering Student
+## License
 
-GitHub:
-
-```text
-https://github.com/abhay-chandra22/StudentManagementSystem
-```
+No license has been added yet. 
