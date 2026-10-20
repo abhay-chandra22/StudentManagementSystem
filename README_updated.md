@@ -224,6 +224,12 @@ With the application running, open:
 
 Swagger UI lets you inspect the documented endpoints and try requests against your local application.
 
+### Swagger UI Preview
+
+The screenshot below shows the interactive API documentation for the Student Management System, including student CRUD, search, pagination, and sorting endpoints.
+
+![Swagger UI showing Student Management System API endpoints](screenshots/swagger-ui.png)
+
 ## Testing Approach
 
 - **Unit tests:** JUnit 5 and Mockito test validation and service logic using controlled DAO responses.
@@ -254,4 +260,4 @@ GitHub: [@abhay-chandra22](https://github.com/abhay-chandra22)
 
 ## License
 
-No license has been added yet. 
+No license has been added yet. If you plan to make this repository reusable by others, consider choosing and adding an appropriate open-source license.
